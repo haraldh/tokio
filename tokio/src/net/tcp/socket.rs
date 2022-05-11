@@ -1,3 +1,5 @@
+#![cfg(not(target_os = "wasi"))]
+
 use crate::net::{TcpListener, TcpStream};
 
 use std::fmt;

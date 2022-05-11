@@ -108,6 +108,7 @@ impl TcpStream {
     ///
     /// [`write_all`]: fn@crate::io::AsyncWriteExt::write_all
     /// [`AsyncWriteExt`]: trait@crate::io::AsyncWriteExt
+    #[cfg(not(target_os = "wasi"))]
     pub async fn connect<A: ToSocketAddrs>(addr: A) -> io::Result<TcpStream> {
         let addrs = to_socket_addrs(addr).await?;
 
@@ -129,6 +130,7 @@ impl TcpStream {
     }
 
     /// Establishes a connection to the specified `addr`.
+    #[cfg(not(target_os = "wasi"))]
     async fn connect_addr(addr: SocketAddr) -> io::Result<TcpStream> {
         let sys = mio::net::TcpStream::connect(addr)?;
         TcpStream::connect_mio(sys).await
@@ -226,6 +228,7 @@ impl TcpStream {
     /// [`tokio::net::TcpStream`]: TcpStream
     /// [`std::net::TcpStream`]: std::net::TcpStream
     /// [`set_nonblocking`]: fn@std::net::TcpStream::set_nonblocking
+    #[cfg(not(target_os = "wasi"))]
     pub fn into_std(self) -> io::Result<std::net::TcpStream> {
         #[cfg(unix)]
         {
@@ -1089,8 +1092,13 @@ impl TcpStream {
     /// # Ok(())
     /// # }
     /// ```
+    #[cfg(not(target_os = "wasi"))]
     pub fn linger(&self) -> io::Result<Option<Duration>> {
         socket2::SockRef::from(self).linger()
+    }
+    #[cfg(target_os = "wasi")]
+    pub fn linger(&self) -> io::Result<Option<Duration>> {
+        Err(io::ErrorKind::Unsupported.into())
     }
 
     /// Sets the linger duration of this socket by setting the SO_LINGER option.
@@ -1114,8 +1122,13 @@ impl TcpStream {
     /// # Ok(())
     /// # }
     /// ```
+    #[cfg(not(target_os = "wasi"))]
     pub fn set_linger(&self, dur: Option<Duration>) -> io::Result<()> {
         socket2::SockRef::from(self).set_linger(dur)
+    }
+    #[cfg(target_os = "wasi")]
+    pub fn set_linger(&self, dur: Option<Duration>) -> io::Result<()> {
+        Ok(())
     }
 
     /// Gets the value of the `IP_TTL` option for this socket.

@@ -33,20 +33,23 @@ cfg_net! {
 
     pub mod tcp;
     pub use tcp::listener::TcpListener;
-    pub use tcp::socket::TcpSocket;
     pub use tcp::stream::TcpStream;
 
+}
+
+cfg_net_unix! {
+   pub mod unix;
+   pub use unix::datagram::socket::UnixDatagram;
+   pub use unix::listener::UnixListener;
+   pub use unix::stream::UnixStream;
+   pub use tcp::socket::TcpSocket;
     mod udp;
     pub use udp::UdpSocket;
 }
 
-cfg_net_unix! {
-    pub mod unix;
-    pub use unix::datagram::socket::UnixDatagram;
-    pub use unix::listener::UnixListener;
-    pub use unix::stream::UnixStream;
-}
-
 cfg_net_windows! {
-    pub mod windows;
+   pub mod windows;
+   pub use tcp::socket::TcpSocket;
+    mod udp;
+    pub use udp::UdpSocket;
 }

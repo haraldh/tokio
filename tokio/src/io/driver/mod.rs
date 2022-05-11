@@ -77,6 +77,7 @@ pub(super) struct Inner {
     pub(super) io_dispatch: slab::Allocator<ScheduledIo>,
 
     /// Used to wake up the reactor from a call to `turn`.
+    #[cfg(not(target_os = "wasi"))]
     waker: mio::Waker,
 
     metrics: IoDriverMetrics,
@@ -120,8 +121,13 @@ impl Driver {
     /// creation.
     pub(crate) fn new() -> io::Result<Driver> {
         let poll = mio::Poll::new()?;
+        #[cfg(not(target_os = "wasi"))]
         let waker = mio::Waker::new(poll.registry(), TOKEN_WAKEUP)?;
+
+        #[cfg(not(target_os = "wasi"))]
         let registry = poll.registry().try_clone()?;
+        #[cfg(target_os = "wasi")]
+        let registry = poll.registry();
 
         let slab = Slab::new();
         let allocator = slab.allocator();
@@ -135,6 +141,7 @@ impl Driver {
                 resources: Mutex::new(None),
                 registry,
                 io_dispatch: allocator,
+                #[cfg(not(target_os = "wasi"))]
                 waker,
                 metrics: IoDriverMetrics::default(),
             }),
@@ -316,6 +323,7 @@ impl Handle {
     /// blocked in `turn`, then the next call to `turn` will not block and
     /// return immediately.
     fn wakeup(&self) {
+        #[cfg(not(target_os = "wasi"))]
         if let Some(inner) = self.inner() {
             inner.waker.wake().expect("failed to wake I/O driver");
         }

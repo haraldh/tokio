@@ -94,6 +94,7 @@ impl TcpListener {
     ///     Ok(())
     /// }
     /// ```
+    #[cfg(not(target_os = "wasi"))]
     pub async fn bind<A: ToSocketAddrs>(addr: A) -> io::Result<TcpListener> {
         let addrs = to_socket_addrs(addr).await?;
 
@@ -114,6 +115,7 @@ impl TcpListener {
         }))
     }
 
+    #[cfg(not(target_os = "wasi"))]
     fn bind_addr(addr: SocketAddr) -> io::Result<TcpListener> {
         let listener = mio::net::TcpListener::bind(addr)?;
         TcpListener::new(listener)
@@ -249,6 +251,7 @@ impl TcpListener {
     /// [`tokio::net::TcpListener`]: TcpListener
     /// [`std::net::TcpListener`]: std::net::TcpListener
     /// [`set_nonblocking`]: fn@std::net::TcpListener::set_nonblocking
+    #[cfg(not(target_os = "wasi"))]
     pub fn into_std(self) -> io::Result<std::net::TcpListener> {
         #[cfg(unix)]
         {
