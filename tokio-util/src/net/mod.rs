@@ -40,7 +40,11 @@ impl Listener for tokio::net::TcpListener {
     }
 
     fn local_addr(&self) -> Result<Self::Addr> {
-        self.local_addr().map(Into::into)
+        #[cfg(not(target_os = "wasi"))]
+        return self.local_addr().map(Into::into);
+
+        #[cfg(target_os = "wasi")]
+        Err(std::io::ErrorKind::Unsupported.into())
     }
 }
 

@@ -623,68 +623,69 @@ mod tests {
         }
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
-    proptest::proptest! {
-        #[test]
-        fn fuzz_linked_list(ops: Vec<usize>) {
-            run_fuzz(ops);
-        }
-    }
-
-    fn run_fuzz(ops: Vec<usize>) {
-        use std::collections::VecDeque;
-
-        #[derive(Debug)]
-        enum Op {
-            Push,
-            Pop,
-            Remove(usize),
+    cfg_not_wasi! {
+        proptest::proptest! {
+            #[test]
+            fn fuzz_linked_list(ops: Vec<usize>) {
+                run_fuzz(ops);
+            }
         }
 
-        let ops = ops
-            .iter()
-            .map(|i| match i % 3 {
-                0 => Op::Push,
-                1 => Op::Pop,
-                2 => Op::Remove(i / 3),
-                _ => unreachable!(),
-            })
-            .collect::<Vec<_>>();
+        fn run_fuzz(ops: Vec<usize>) {
+            use std::collections::VecDeque;
 
-        let mut ll = LinkedList::<&Entry, <&Entry as Link>::Target>::new();
-        let mut reference = VecDeque::new();
+            #[derive(Debug)]
+            enum Op {
+                Push,
+                Pop,
+                Remove(usize),
+            }
 
-        let entries: Vec<_> = (0..ops.len()).map(|i| entry(i as i32)).collect();
+            let ops = ops
+                .iter()
+                .map(|i| match i % 3 {
+                    0 => Op::Push,
+                    1 => Op::Pop,
+                    2 => Op::Remove(i / 3),
+                    _ => unreachable!(),
+                })
+                .collect::<Vec<_>>();
 
-        for (i, op) in ops.iter().enumerate() {
-            match op {
-                Op::Push => {
-                    reference.push_front(i as i32);
-                    assert_eq!(entries[i].val, i as i32);
+            let mut ll = LinkedList::<&Entry, <&Entry as Link>::Target>::new();
+            let mut reference = VecDeque::new();
 
-                    ll.push_front(entries[i].as_ref());
-                }
-                Op::Pop => {
-                    if reference.is_empty() {
-                        assert!(ll.is_empty());
-                        continue;
+            let entries: Vec<_> = (0..ops.len()).map(|i| entry(i as i32)).collect();
+
+            for (i, op) in ops.iter().enumerate() {
+                match op {
+                    Op::Push => {
+                        reference.push_front(i as i32);
+                        assert_eq!(entries[i].val, i as i32);
+
+                        ll.push_front(entries[i].as_ref());
                     }
+                    Op::Pop => {
+                        if reference.is_empty() {
+                            assert!(ll.is_empty());
+                            continue;
+                        }
 
-                    let v = reference.pop_back();
-                    assert_eq!(v, ll.pop_back().map(|v| v.val));
-                }
-                Op::Remove(n) => {
-                    if reference.is_empty() {
-                        assert!(ll.is_empty());
-                        continue;
+                        let v = reference.pop_back();
+                        assert_eq!(v, ll.pop_back().map(|v| v.val));
                     }
+                    Op::Remove(n) => {
+                        if reference.is_empty() {
+                            assert!(ll.is_empty());
+                            continue;
+                        }
 
-                    let idx = n % reference.len();
-                    let expect = reference.remove(idx).unwrap();
+                        let idx = n % reference.len();
+                        let expect = reference.remove(idx).unwrap();
 
-                    unsafe {
-                        let entry = ll.remove(ptr(&entries[expect as usize])).unwrap();
-                        assert_eq!(expect, entry.val);
+                        unsafe {
+                            let entry = ll.remove(ptr(&entries[expect as usize])).unwrap();
+                            assert_eq!(expect, entry.val);
+                        }
                     }
                 }
             }

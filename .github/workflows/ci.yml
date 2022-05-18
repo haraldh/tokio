@@ -48,6 +48,7 @@ jobs:
       - check-readme
       - test-hyper
       - wasm32-unknown-unknown
+      - wasm32-wasi-cross
     steps:
       - run: exit 0
 
@@ -158,6 +159,24 @@ jobs:
       # Run with valgrind
       - name: Run valgrind test-process-signal
         run: valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all ./target/debug/test-process-signal
+
+  wasm32-wasi-cross:
+    name: wasm32-wasi-cross
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust ${{ env.rust_stable }}
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: ${{ env.rust_stable }}
+            override: true
+      - uses: Swatinem/rust-cache@v1
+      # Fetch wasm32-wasi target support
+      - name: install Wasm32 target
+        run: rustup target add wasm32-wasi
+      # Compile
+      - name: cargo build --target=wasm32-wasi
+        run: cargo build --target=wasm32-wasi
 
   test-unstable:
     name: test tokio full --unstable

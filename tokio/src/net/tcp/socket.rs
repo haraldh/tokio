@@ -1,3 +1,4 @@
+#![cfg(not(target_arm = "wasm32"))]
 use crate::net::{TcpListener, TcpStream};
 
 use std::fmt;
