@@ -301,7 +301,7 @@ cfg_rt! {
         CurrentThread(BasicScheduler),
 
         /// Execute tasks across multiple threads.
-        #[cfg(feature = "rt-multi-thread")]
+        #[cfg(all(feature = "rt-multi-thread", not(target_os = "wasi")))]
         ThreadPool(ThreadPool),
     }
 
@@ -481,7 +481,7 @@ cfg_rt! {
 
             match &self.kind {
                 Kind::CurrentThread(exec) => exec.block_on(future),
-                #[cfg(feature = "rt-multi-thread")]
+                #[cfg(all(feature = "rt-multi-thread", not(target_os = "wasi")))]
                 Kind::ThreadPool(exec) => exec.block_on(future),
             }
         }
@@ -611,7 +611,7 @@ cfg_rt! {
                         },
                     }
                 },
-                #[cfg(feature = "rt-multi-thread")]
+                #[cfg(all(feature = "rt-multi-thread", not(target_os = "wasi")))]
                 Kind::ThreadPool(_) => {
                     // The threaded scheduler drops its tasks on its worker threads, which is
                     // already in the runtime's context.

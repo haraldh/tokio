@@ -207,8 +207,9 @@ cfg_coop! {
 mod test {
     use super::*;
 
-    #[cfg(target_arch = "wasm32")]
-    use wasm_bindgen_test::wasm_bindgen_test as test;
+    cfg_is_wasm_not_wasi! {
+        use wasm_bindgen_test::wasm_bindgen_test as test;
+    }
 
     fn get() -> Budget {
         CURRENT.with(|cell| cell.get())

@@ -17,6 +17,7 @@ async fn simultaneous_deadline_future_completion() {
     assert_ready_ok!(fut.poll());
 }
 
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: Does not seem to work with WASI")]
 #[tokio::test]
 async fn completed_future_past_deadline() {
     // Wrap it with a deadline

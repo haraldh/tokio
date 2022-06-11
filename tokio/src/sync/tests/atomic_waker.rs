@@ -12,8 +12,9 @@ impl AssertSync for AtomicWaker {}
 impl AssertSend for Waker {}
 impl AssertSync for Waker {}
 
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen_test::wasm_bindgen_test as test;
+cfg_is_wasm_not_wasi! {
+    use wasm_bindgen_test::wasm_bindgen_test as test;
+}
 
 #[test]
 fn basic_usage() {

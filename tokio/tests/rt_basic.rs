@@ -238,6 +238,7 @@ fn spawn_two() {
     }
 }
 
+#[cfg_attr(target_os = "wasi", ignore = "WASI: std::thread::spawn not supported")]
 #[test]
 fn spawn_remote() {
     let rt = rt();
