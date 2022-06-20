@@ -1,6 +1,7 @@
 #![cfg(feature = "full")]
 use tokio::io::{AsyncBufReadExt, AsyncReadExt};
 
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[tokio::test]
 async fn empty_read_is_cooperative() {
     tokio::select! {
@@ -16,6 +17,7 @@ async fn empty_read_is_cooperative() {
     }
 }
 
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[tokio::test]
 async fn empty_buf_reads_are_cooperative() {
     tokio::select! {

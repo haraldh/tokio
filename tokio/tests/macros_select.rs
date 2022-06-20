@@ -126,6 +126,7 @@ async fn one_ready() {
 }
 
 #[maybe_tokio_test]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[cfg(feature = "full")]
 async fn select_streams() {
     use tokio::sync::mpsc;

@@ -106,6 +106,7 @@ async fn send_recv_stream_with_buffer() {
 }
 
 #[tokio::test]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[cfg(feature = "full")]
 async fn async_send_recv_with_buffer() {
     let (tx, mut rx) = mpsc::channel(16);
@@ -177,6 +178,7 @@ async fn send_recv_unbounded() {
 }
 
 #[tokio::test]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[cfg(feature = "full")]
 async fn async_send_recv_unbounded() {
     let (tx, mut rx) = mpsc::unbounded_channel();

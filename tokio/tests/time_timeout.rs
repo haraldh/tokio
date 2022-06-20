@@ -103,6 +103,7 @@ async fn very_large_timeout() {
 }
 
 #[tokio::test]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn deadline_now_elapses() {
     use futures::future::pending;
 

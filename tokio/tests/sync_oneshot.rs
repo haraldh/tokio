@@ -94,6 +94,7 @@ fn close_rx() {
 }
 
 #[tokio::test]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[cfg(feature = "full")]
 async fn async_rx_closed() {
     let (mut tx, rx) = oneshot::channel::<()>();

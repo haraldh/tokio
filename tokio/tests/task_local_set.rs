@@ -18,6 +18,7 @@ use std::sync::atomic::{AtomicBool, AtomicUsize};
 use std::time::Duration;
 
 #[tokio::test(flavor = "current_thread")]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn local_basic_scheduler() {
     LocalSet::new()
         .run_until(async {
@@ -524,6 +525,7 @@ async fn acquire_mutex_in_drop() {
 }
 
 #[tokio::test]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn spawn_wakes_localset() {
     let local = LocalSet::new();
     futures::select! {

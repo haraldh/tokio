@@ -37,6 +37,7 @@ fn try_acquire_many() {
 
 #[tokio::test]
 #[cfg(feature = "full")]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn acquire() {
     let sem = Arc::new(Semaphore::new(1));
     let p1 = sem.clone().try_acquire_owned().unwrap();
@@ -50,6 +51,7 @@ async fn acquire() {
 
 #[tokio::test]
 #[cfg(feature = "full")]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn acquire_many() {
     let semaphore = Arc::new(Semaphore::new(42));
     let permit32 = semaphore.clone().try_acquire_many_owned(32).unwrap();
@@ -66,6 +68,7 @@ async fn acquire_many() {
 
 #[tokio::test]
 #[cfg(feature = "full")]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn add_permits() {
     let sem = Arc::new(Semaphore::new(0));
     let sem_clone = sem.clone();
@@ -91,6 +94,7 @@ fn forget() {
 
 #[tokio::test]
 #[cfg(feature = "full")]
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 async fn stresstest() {
     let sem = Arc::new(Semaphore::new(5));
     let mut join_handles = Vec::new();

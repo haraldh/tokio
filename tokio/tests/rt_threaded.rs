@@ -74,6 +74,7 @@ fn many_oneshot_futures() {
     }
 }
 
+#[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
 #[test]
 fn spawn_two() {
     let rt = rt();

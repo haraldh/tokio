@@ -116,6 +116,7 @@ rt_test! {
         assert_eq!(out, "ZOMG");
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn spawn_one_bg() {
         let rt = rt();
@@ -133,6 +134,7 @@ rt_test! {
         assert_eq!(out, "ZOMG");
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn spawn_one_join() {
         let rt = rt();
@@ -156,6 +158,7 @@ rt_test! {
         assert_eq!(out, "ZOMG");
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn spawn_two() {
         let rt = rt();
@@ -291,6 +294,7 @@ rt_test! {
         }
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn spawn_await_chain() {
         let rt = rt();
@@ -461,6 +465,7 @@ rt_test! {
         assert!(now.elapsed() >= dur);
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn sleep_in_spawn() {
         let rt = rt();
@@ -724,6 +729,7 @@ rt_test! {
         .await
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn enter_and_spawn() {
         let rt = rt();
@@ -735,6 +741,7 @@ rt_test! {
         assert_ok!(rt.block_on(handle));
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn eagerly_drops_futures_on_shutdown() {
         use std::sync::mpsc;
@@ -777,6 +784,7 @@ rt_test! {
         assert_ok!(drop_rx.recv());
     }
 
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn wake_while_rt_is_dropping() {
         use tokio::sync::Barrier;
@@ -1121,6 +1129,7 @@ rt_test! {
 
     // Tests that the "next task" scheduler optimization is not able to starve
     // other tasks.
+    #[cfg_attr(target_os = "wasi", ignore = "FIXME: empty poll in park")]
     #[test]
     fn ping_pong_saturation() {
         use std::sync::atomic::{Ordering, AtomicBool};
